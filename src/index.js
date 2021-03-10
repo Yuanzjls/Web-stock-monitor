@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from "./App"
-const DATA=[{id:"todo-0", name:"Eat", completed:true},
-{id: "todo-1", name:"Sleep", completed: false},
-{id: "todo-2", name:"Repeat", completed: false}];
+const DATA=[{id:"todo-0", name:"STM"},
+{id: "todo-1", name:"TXN"},
+{id: "todo-2", name:"AMD"},
+{id: "todo-3", name:"MSFT"},
+{id: "todo-4", name:"INTC"},
+];
+
 
 ReactDOM.render(
 
