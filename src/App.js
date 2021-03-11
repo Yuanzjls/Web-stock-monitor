@@ -1,6 +1,5 @@
 import Todo from "./components/Todo";
 import Form from "./components/Form";
-import FilterButton from "./components/FilterButton";
 import React, {useState, useRef, useEffect} from "react";
 import {nanoid} from "nanoid";
 const axios = require('axios');
@@ -53,39 +52,14 @@ function App(props) {
   function addTask(name){
     const newTask = {id:"todo-" + nanoid(), name:name};
     setTasks([...tasks, newTask]);
-    // console.log(tasks);
   }
-  // axios.get('https://finnhub.io/api/v1/quote?symbol=AMD&token=c1433cn48v6s4a2e39q0')
-  //   .then(function (response) {
-  //       // handle success
-  //       console.log(response);
-  //   })
-  //   .catch(function (error) {
-  //       // handle error
-  //       console.log(error);
-  //   })
-  //   .then(function () {
-  //       // always executed
-  //   });
-  // setInterval(() => {
-  //   axios.get('https://finnhub.io/api/v1/quote?symbol=AMD&token=c1433cn48v6s4a2e39q0')
-  //   .then(function (response) {
-  //       // handle success
-  //       console.log(response);
-  //   })
-  //   .catch(function (error) {
-  //       // handle error
-  //       console.log(error);
-  //   })
-  //   .then(function () {
-  //       // always executed
-  //   });
-  // }, 10000);
+ 
   
 
   return (
     <div className="todoapp stack-large">
       <h1>Stock Prices</h1>
+        <p className="label__lg">Update at 2021-03-11</p>
         <Form addTask={addTask}/>
       <div className="filters btn-group stack-exception">
       

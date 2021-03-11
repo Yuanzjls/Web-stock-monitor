@@ -1,4 +1,5 @@
 import React, {useEffect ,useRef, useState} from "react";
+import moment from "moment-timezone";
 const axios = require('axios');
 // const async = require("async");
 const apiKey = "c1433cn48v6s4a2e39q0";
@@ -8,7 +9,7 @@ const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
 export default function Todo(props){
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
-    const [priceInfo, setPriceInfo] = useState({priceChange:0, priceChangePercentage:0});
+    const [priceInfo, setPriceInfo] = useState({priceChange:0, priceChangePercentage:0, time:0});
     const editFieldRef = useRef(null);
     const editButtonRef = useRef(null);
     const [price, setPrice] = useState({ currentPrice: 0,
@@ -37,19 +38,21 @@ export default function Todo(props){
     useEffect(()=>{
         async function fetchPrice(){
             try{
-                let priceChange, priceChangePercentage;
+                let priceChange, priceChangePercentage, time;
                 const response = await axios(apiUrl);
                 const stockPrice = {
                     'currentPrice': response.data.c,
-                    'highestPrice': response.data.h,
-                    'lowestPrice': response.data.l,
-                    'openPrice': response.data.o,
-                    'previousPrice':response.data.pc
+                    // 'highestPrice': response.data.h,
+                    // 'lowestPrice': response.data.l,
+                    // 'openPrice': response.data.o,
+                    'previousPrice':response.data.pc,
+                    'time':response.data.t,
                 };
                 setPrice(stockPrice);
                 priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
                 priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
-                setPriceInfo({priceChange, priceChangePercentage});
+                time = stockPrice['time'];
+                setPriceInfo({priceChange, priceChangePercentage, time});
             } catch (error){
                 console.log(error);
             }
@@ -87,11 +90,16 @@ export default function Todo(props){
     const viewTemplate=(
     <div className="stack-small">
     <div className="c-cb">       
-        <label className="todo-label" htmlFor={props.id}>
-            {props.name}
-        </label> 
-        <span className="stock-price">{price.currentPrice}</span><br/>
-        <span className="stock-price" style={{color:priceInfo.priceChange>0?"green":"red"}}>{Number(priceInfo.priceChange).toFixed(2)}({Number(priceInfo.priceChangePercentage).toFixed(2)}%)</span>
+        <div className="stock-container">
+            <label className="todo-label" htmlFor={props.id}>
+                {props.name}
+            </label> 
+            <div>      
+                <span className="stock-price">{price.currentPrice}</span><br/>
+                <span className="stock-price" style={{color:priceInfo.priceChange>0?"green":"red"}}>{Number(priceInfo.priceChange).toFixed(2)}({Number(priceInfo.priceChangePercentage).toFixed(2)}%)<br/></span>
+                <span>Last update time:{moment().format("YYYY-MM-DD HH:mm")}</span>
+            </div>  
+        </div>
     </div>
     <div className="btn-group">
         <button type="button" className="btn" onClick={()=>setEditing(true)} ref={editButtonRef}>

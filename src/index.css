@@ -295,4 +295,14 @@ body {
   display: block;
   text-align: end;
   font-size: larger;
+  align-self:flex-end;
+}
+.stock-container{
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+}
+.todo-label{
+  align-self: flex-start;
+  margin-block: auto;
 }
