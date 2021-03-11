@@ -48,7 +48,7 @@ export default function Todo(props){
                 };
                 setPrice(stockPrice);
                 priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
-                priceChangePercentage = priceChange / stockPrice.previousPrice * 100;
+                priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
                 setPriceInfo({priceChange, priceChangePercentage});
                 // console.log(priceChange);
                 
@@ -87,14 +87,14 @@ export default function Todo(props){
             </div>
         </form>
     );
-
     const viewTemplate=(
     <div className="stack-small">
     <div className="c-cb">       
         <label className="todo-label" htmlFor={props.id}>
             {props.name}
         </label> 
-        <span className="stock-price">{price.currentPrice}<br/>{Number(priceInfo.priceChange).toFixed(2)}({Number(priceInfo.priceChangePercentage).toFixed(2)}%)</span>
+        <span className="stock-price">{price.currentPrice}</span><br/>
+        <span className="stock-price" style={{color:priceInfo.priceChange>0?"green":"red"}}>{Number(priceInfo.priceChange).toFixed(2)}({Number(priceInfo.priceChangePercentage).toFixed(2)}%)</span>
     </div>
     <div className="btn-group">
         <button type="button" className="btn" onClick={()=>setEditing(true)} ref={editButtonRef}>
