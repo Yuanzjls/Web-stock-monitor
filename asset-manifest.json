@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/Web-stock-monitor/static/css/main.17743891.chunk.css",
+    "main.js": "/Web-stock-monitor/static/js/main.3c77b594.chunk.js",
+    "main.js.map": "/Web-stock-monitor/static/js/main.3c77b594.chunk.js.map",
+    "runtime-main.js": "/Web-stock-monitor/static/js/runtime-main.ecc37313.js",
+    "runtime-main.js.map": "/Web-stock-monitor/static/js/runtime-main.ecc37313.js.map",
+    "static/js/2.855b02a9.chunk.js": "/Web-stock-monitor/static/js/2.855b02a9.chunk.js",
+    "static/js/2.855b02a9.chunk.js.map": "/Web-stock-monitor/static/js/2.855b02a9.chunk.js.map",
+    "static/js/3.2d765464.chunk.js": "/Web-stock-monitor/static/js/3.2d765464.chunk.js",
+    "static/js/3.2d765464.chunk.js.map": "/Web-stock-monitor/static/js/3.2d765464.chunk.js.map",
+    "index.html": "/Web-stock-monitor/index.html",
+    "static/css/main.17743891.chunk.css.map": "/Web-stock-monitor/static/css/main.17743891.chunk.css.map",
+    "static/js/2.855b02a9.chunk.js.LICENSE.txt": "/Web-stock-monitor/static/js/2.855b02a9.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ecc37313.js",
+    "static/js/2.855b02a9.chunk.js",
+    "static/css/main.17743891.chunk.css",
+    "static/js/main.3c77b594.chunk.js"
+  ]
+}
