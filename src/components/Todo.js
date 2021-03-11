@@ -1,6 +1,6 @@
 import React, {useEffect ,useRef, useState} from "react";
 const axios = require('axios');
-const async = require("async");
+// const async = require("async");
 const apiKey = "c1433cn48v6s4a2e39q0";
 const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
 
@@ -13,7 +13,8 @@ export default function Todo(props){
     const editButtonRef = useRef(null);
     const [price, setPrice] = useState({ currentPrice: 0,
     highestPrice: 0, lowestPrice:0, openPrice:0, previousPrice:0});
-
+    const wasEditing = usePrevious(isEditing);
+    const apiUrl = `${preUrl}${props.name}&token=${apiKey}`;
 
     function usePrevious(value){
         const ref=useRef();
@@ -22,8 +23,7 @@ export default function Todo(props){
         });
         return ref.current;
     }
-    const wasEditing = usePrevious(isEditing);
-    const apiUrl = `${preUrl}${props.name}&token=${apiKey}`;
+
 
     useEffect(()=>{
         if (!wasEditing && isEditing) {
@@ -34,7 +34,7 @@ export default function Todo(props){
         }
     }, [wasEditing, isEditing]);
     
-    useEffect(async ()=>{
+    useEffect(()=>{
         async function fetchPrice(){
             try{
                 let priceChange, priceChangePercentage;
@@ -50,10 +50,7 @@ export default function Todo(props){
                 priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
                 priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
                 setPriceInfo({priceChange, priceChangePercentage});
-                // console.log(priceChange);
-                
-                // console.log(stockPrice);
-            }catch (error){
+            } catch (error){
                 console.log(error);
             }
     }
@@ -63,7 +60,7 @@ export default function Todo(props){
             
         }, 60000);
         return ()=>clearInterval(id);
-    },[]);
+    },[apiUrl]);
     
     
     const editingTemplate = (
