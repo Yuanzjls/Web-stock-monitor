@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from "./App"
-const DATA=[{id:"todo-0", name:"STM"},
-{id: "todo-1", name:"TXN"},
-{id: "todo-2", name:"AMD"},
-{id: "todo-3", name:"MSFT"},
-{id: "todo-4", name:"INTC"},
+const DATA=[{id:"todo-0", name:"STM", priceInfo:{'pricePre':0, 'priceCur':0}},
+{id: "todo-1", name:"TXN", priceInfo:{'pricePre':0, 'priceCur':0}},
+{id: "todo-2", name:"AMD", priceInfo:{'pricePre':0, 'priceCur':0}},
+{id: "todo-3", name:"MSFT", priceInfo:{'pricePre':0, 'priceCur':0}},
+{id: "todo-4", name:"INTC", priceInfo:{'pricePre':0, 'priceCur':0}},
 ];
 
 
 ReactDOM.render(
 
-    <App tasks={DATA}/>,
+    <App stocks={DATA}/>,
   
   document.getElementById('root')
 );

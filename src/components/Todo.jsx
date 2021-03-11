@@ -1,21 +1,13 @@
 import React, {useEffect ,useRef, useState} from "react";
-import moment from "moment-timezone";
-const axios = require('axios');
-// const async = require("async");
-const apiKey = "c1433cn48v6s4a2e39q0";
-const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
-
 
 export default function Todo(props){
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
-    const [priceInfo, setPriceInfo] = useState({priceChange:0, priceChangePercentage:0, time:0});
     const editFieldRef = useRef(null);
     const editButtonRef = useRef(null);
-    const [price, setPrice] = useState({ currentPrice: 0,
-    highestPrice: 0, lowestPrice:0, openPrice:0, previousPrice:0});
     const wasEditing = usePrevious(isEditing);
-    const apiUrl = `${preUrl}${props.name}&token=${apiKey}`;
+    const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
+    const priceChangePercentage = priceChange / props.priceInfo.pricePre * 100;
 
     function usePrevious(value){
         const ref=useRef();
@@ -35,35 +27,35 @@ export default function Todo(props){
         }
     }, [wasEditing, isEditing]);
     
-    useEffect(()=>{
-        async function fetchPrice(){
-            try{
-                let priceChange, priceChangePercentage, time;
-                const response = await axios(apiUrl);
-                const stockPrice = {
-                    'currentPrice': response.data.c,
-                    // 'highestPrice': response.data.h,
-                    // 'lowestPrice': response.data.l,
-                    // 'openPrice': response.data.o,
-                    'previousPrice':response.data.pc,
-                    'time':response.data.t,
-                };
-                setPrice(stockPrice);
-                priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
-                priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
-                time = stockPrice['time'];
-                setPriceInfo({priceChange, priceChangePercentage, time});
-            } catch (error){
-                console.log(error);
-            }
-    }
-        fetchPrice();
-        const id = setInterval(() => {
-            fetchPrice();
+    // useEffect(()=>{
+    //     async function fetchPrice(){
+    //         try{
+    //             let priceChange, priceChangePercentage, time;
+    //             const response = await axios(apiUrl);
+    //             const stockPrice = {
+    //                 'currentPrice': response.data.c,
+    //                 // 'highestPrice': response.data.h,
+    //                 // 'lowestPrice': response.data.l,
+    //                 // 'openPrice': response.data.o,
+    //                 'previousPrice':response.data.pc,
+    //                 'time':response.data.t,
+    //             };
+    //             setPrice(stockPrice);
+    //             priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
+    //             priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
+    //             time = stockPrice['time'];
+    //             setPriceInfo({priceChange, priceChangePercentage, time});
+    //         } catch (error){
+    //             console.log(error);
+    //         }
+    // }
+    //     fetchPrice();
+    //     const id = setInterval(() => {
+    //         fetchPrice();
             
-        }, 60000);
-        return ()=>clearInterval(id);
-    },[apiUrl]);
+    //     }, 60000);
+    //     return ()=>clearInterval(id);
+    // },[apiUrl]);
     
     
     const editingTemplate = (
@@ -95,9 +87,8 @@ export default function Todo(props){
                 {props.name}
             </label> 
             <div>      
-                <span className="stock-price">{price.currentPrice}</span><br/>
-                <span className="stock-price" style={{color:priceInfo.priceChange>0?"green":"red"}}>{Number(priceInfo.priceChange).toFixed(2)}({Number(priceInfo.priceChangePercentage).toFixed(2)}%)<br/></span>
-                <span>Last update time:{moment().format("YYYY-MM-DD HH:mm")}</span>
+                <span className="stock-price">{props.priceInfo.priceCur}</span><br/>
+                <span className="stock-price" style={{color:priceChange>0?"green":"red"}}>{Number(priceChange).toFixed(2)}({Number(priceChangePercentage).toFixed(2)}%)<br/></span>
             </div>  
         </div>
     </div>

@@ -3,18 +3,16 @@ import Form from "./components/Form";
 import React, {useState, useRef, useEffect} from "react";
 import {nanoid} from "nanoid";
 const axios = require('axios');
+const moment = require("moment-timezone");
+const apiKey = "c1433cn48v6s4a2e39q0";
+const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
 
-// const FILTER_MAP={
-//   All:()=>true,
-//   Active: task=>!task.completed,
-//   completed: task=>task.completed,
-// }
-// const FILTER_NAMES = Object.keys(FILTER_MAP);
+
 
 function App(props) {
-  const [tasks, setTasks] = useState(props.tasks);
-  const [filter, setFilter] = useState("All");
-  const prevTaskLenght = usePrevious(tasks.length);
+  const [stocks, setStocks] = useState(props.stocks);
+  const prevTaskLenght = usePrevious(stocks.length);
+  const [timeUpdate, SetTime] = useState("00:00:00 AM");
   function usePrevious(value) {
     const ref = useRef();
     useEffect(()=>{
@@ -23,35 +21,56 @@ function App(props) {
     return ref.current;
   }
   const listHeadingRef = useRef(null);
-  const taskList = tasks.map(task => (<Todo id={task.id} name={task.name} key={task.id}  deleteTask={deleteTask} editTask={editTask}/>));
-  const tasksNoun = taskList.length!==1? 'stocks' : 'stock';
-  const headingText = `${taskList.length} ${tasksNoun}`;
+  const stockList = stocks.map(stock => (<Todo id={stock.id} name={stock.name} key={stock.id}  deleteTask={deleteTask} editTask={editTask}
+  priceInfo={stock.priceInfo}/>));
+  const tasksNoun = stockList.length!==1? 'stocks' : 'stock';
+  const headingText = `${stockList.length} ${tasksNoun}`;
+  const apiList = stocks.map(stock=>({apiUrl:`${preUrl}${stock.name}&token=${apiKey}`}));
 
   useEffect(()=>{
-    if (taskList.length-prevTaskLenght ===-1){
+    if (stockList.length-prevTaskLenght ===-1){
       listHeadingRef.current.focus();
     }
-  }, [tasks.length, prevTaskLenght]);
+  }, [stocks.length, prevTaskLenght]);
+
+
+  useEffect(()=>{
+    
+    const promises = apiList.map(api=>axios(api.apiUrl));
+    // console.log(promises);
+    axios.all(promises).then(axios.spread((...responses)=>{
+      const newStocks = stocks.map((stock, index)=>{
+        return {...stock, priceInfo:{'pricePre':responses[index].data.pc, 'priceCur':responses[index].data.c}};
+      });
+      setStocks(newStocks);
+      console.log(newStocks);
+    })).catch(errors => {
+      console.log(errors);
+    });
+  
+  }, [...apiList.map(api=>api.apiUrl)]);
+
+
+
+
   function deleteTask(id){
-    const remainingTasks = tasks.filter(task=> id !== task.id);
-    setTasks(remainingTasks);
+    const remainingTasks = stocks.filter(task=> id !== task.id);
+    setStocks(remainingTasks);
   }
 
   function editTask(id, newName){
-    const editedTasks=tasks.map(task=>{
+    const editedTasks=stocks.map(task=>{
       if (id === task.id){
         return {...task, name:newName};
       }
       return task;
     });
-    setTasks(editedTasks);
+    setStocks(editedTasks);
   }
-
-
 
   function addTask(name){
     const newTask = {id:"todo-" + nanoid(), name:name};
-    setTasks([...tasks, newTask]);
+    setStocks([...stocks, newTask]);
   }
  
   
@@ -59,14 +78,13 @@ function App(props) {
   return (
     <div className="todoapp stack-large">
       <h1>Stock Prices</h1>
-        <p className="label__lg">Update at 2021-03-11</p>
         <Form addTask={addTask}/>
       <div className="filters btn-group stack-exception">
       
       </div>
       <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
       <ul role="list" className="todo-list stack-large stack-exception" aria-labelledby='list-heading'>
-        {taskList}        
+        {stockList}        
       </ul>
     </div> 
 
