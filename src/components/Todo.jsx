@@ -3,6 +3,7 @@ import React, {useEffect ,useRef, useState} from "react";
 export default function Todo(props){
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
+    const [hidden, setHidden] = useState(true);
     const editFieldRef = useRef(null);
     const editButtonRef = useRef(null);
     const wasEditing = usePrevious(isEditing);
@@ -17,6 +18,14 @@ export default function Todo(props){
         return ref.current;
     }
 
+    function mouserOver(){
+        setHidden(false);
+        console.log("Over");
+    }
+    function mouseOut(){
+        setHidden(true);
+        console.log("Out");
+    }
 
     useEffect(()=>{
         if (!wasEditing && isEditing) {
@@ -25,38 +34,7 @@ export default function Todo(props){
         if (wasEditing && !isEditing) {
             editButtonRef.current.focus();
         }
-    }, [wasEditing, isEditing]);
-    
-    // useEffect(()=>{
-    //     async function fetchPrice(){
-    //         try{
-    //             let priceChange, priceChangePercentage, time;
-    //             const response = await axios(apiUrl);
-    //             const stockPrice = {
-    //                 'currentPrice': response.data.c,
-    //                 // 'highestPrice': response.data.h,
-    //                 // 'lowestPrice': response.data.l,
-    //                 // 'openPrice': response.data.o,
-    //                 'previousPrice':response.data.pc,
-    //                 'time':response.data.t,
-    //             };
-    //             setPrice(stockPrice);
-    //             priceChange = stockPrice.currentPrice-stockPrice.previousPrice;
-    //             priceChangePercentage = Math.abs(priceChange / stockPrice.previousPrice * 100);
-    //             time = stockPrice['time'];
-    //             setPriceInfo({priceChange, priceChangePercentage, time});
-    //         } catch (error){
-    //             console.log(error);
-    //         }
-    // }
-    //     fetchPrice();
-    //     const id = setInterval(() => {
-    //         fetchPrice();
-            
-    //     }, 60000);
-    //     return ()=>clearInterval(id);
-    // },[apiUrl]);
-    
+    }, [wasEditing, isEditing]);    
     
     const editingTemplate = (
         <form className="stack-small" onSubmit={(e)=>{e.preventDefault(); props.editTask(props.id, newName); setNewName(""); setEditing(false)}} ref={editFieldRef}>
@@ -80,8 +58,8 @@ export default function Todo(props){
         </form>
     );
     const viewTemplate=(
-    <div className="stack-small">
-    <div className="c-cb">       
+    <div className="stack-small" onMouseOver={mouserOver} onMouseOut={mouseOut}>
+    <div className="c-cb"  >       
         <div className="stock-container">
             <label className="todo-label" htmlFor={props.id}>
                 {props.name}
@@ -92,7 +70,7 @@ export default function Todo(props){
             </div>  
         </div>
     </div>
-    <div className="btn-group">
+    <div className="btn-group"  style={{display: hidden?"none":""}}>
         <button type="button" className="btn" onClick={()=>setEditing(true)} ref={editButtonRef}>
             Edit <span className="visually-hidden">{props.name} </span>
         </button>
@@ -102,7 +80,6 @@ export default function Todo(props){
     </div>
     </div>
 );
-
 
 
     return(

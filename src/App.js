@@ -108,7 +108,7 @@ function App(props) {
             console.log(priceInfo);
           }
           else{
-            
+            alert(name + "dose not exist");
           }
         })
         .catch(errors=>{console.log(errors);});
