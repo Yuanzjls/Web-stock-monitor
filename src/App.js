@@ -36,12 +36,12 @@ function App(props) {
     }
   }, [stockList.length, prevTaskLenght]);
 
-  useInterval(()=>{fetchData();}, 10000)
+  useInterval(()=>{fetchData();}, 60000)
 
   function fetchData() {
     let apiList = stocks.map(stock=>({apiUrl:`${preUrl}${stock.name}&token=${apiKey}`}));
     let promises = apiList.map(api=>axios(api.apiUrl));
-    console.log(stocks);
+    // console.log(stocks);
 
     axios.all(promises).then(axios.spread((...responses)=>{
       const newStocks = stocks.map((stock, index)=>{
@@ -72,37 +72,107 @@ function App(props) {
       return () => clearInterval(id);
     }, [delay]);
   }
-  
-
-
-
-
 
   function deleteTask(id){
     const remainingTasks = stocks.filter(task=> id !== task.id);
     setStocks(remainingTasks);
-    console.log(remainingTasks);
-    // SetActive(!active);
+    // console.log(remainingTasks);
   }
 
-  function editTask(id, newName){
-    const editedTasks=stocks.map(task=>{
-      if (id === task.id){
-        return {...task, name:newName};
+  function editTask(id, name){
+    let newName = encodeURI(name.toUpperCase().trim());
+
+    if (stocks.map(stock=>stock.name).includes(newName))
+    {
+      alert(newName + " is already on the watch list");
+      return;
+    }
+
+    const editedTasks=[...stocks];
+
+    stocks.forEach((task, index) => {
+      if (id=== task.id)
+      {
+        let tmpName = task.name;
+        let priceInfo={'pricePre':task.priceInfo.pricePre, 'priceCur':task.priceInfo.priceCur};
+        axios.get(`${preUrl}${newName}&token=${apiKey}`)
+        .then((response)=>{
+          if (response.data.t!==0){      
+            tmpName = newName;
+            priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
+            editedTasks[index].name = newName;
+            editedTasks[index].priceInfo = priceInfo;
+            console.log(stocks);
+            console.log(editedTasks);
+            setStocks(editedTasks);
+            console.log(priceInfo);
+          }
+          else{
+            
+          }
+        })
+        .catch(errors=>{console.log(errors);});
+
       }
-      return task;
     });
-    setStocks(editedTasks);
-    // SetActive(!active);
+    // setStocks(editedTasks);
+    // stocks.map(task=>{
+    //   if (id === task.id){
+        
+        
+    //     console.log(priceInfo);
+    //     const pullPrice = async ()=>{
+    //       let tmpName = task.name;
+    //       let priceInfo={'pricePre':task.priceInfo.pricePre, 'priceCur':task.priceInfo.priceCur};
+    //       try {
+    //         const response = await axios.get(`${preUrl}${newName}&token=${apiKey}`);
+    //         console.log(response.data);
+    //         if (response.data.t!==0){      
+    //           tmpName = newName;
+    //           priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
+    //           console.log(priceInfo);
+    //         }
+    //         else{
+    //           alert("The "+newName + " is not a stock symbol");
+    //         }
+    //       }
+    //       catch(error){
+    //         console.log(error);
+    //       }
+    //       return {tmpName, priceInfo};
+    //     }
+    //     const {tmpName, priceInfo} = pullPrice();
+    //     console.log(tmpName);
+    //     return {...task, name:tmpName, priceInfo:priceInfo};
+    //   }
+    //   return task;
+    // });
+    // setStocks(editedTasks);
+   
   }
 
   function addTask(name){
-    const newTask = {id:"todo-" + nanoid(), name:name, priceInfo:{'pricePre':0, 'priceCur':0}};
-    setStocks([...stocks, newTask]);
-    // SetActive(active);
+    let newName = encodeURI(name.toUpperCase().trim());
+    if (stocks.map(stock=>stock.name).includes(newName))
+    {
+      alert(newName + " is already on the watch list");
+      return;
+    }
+    axios.get(`${preUrl}${newName}&token=${apiKey}`)
+    .then(response=>{
+      
+      const newTask = {id:"todo-" + nanoid(), name:newName, priceInfo:{'pricePre':response.data.pc, 'priceCur':response.data.c}};
+      
+      if (response.data.t!==0){      
+        setStocks([...stocks, newTask]);
+      }
+      else{
+        alert("The "+newName + " is not a stock symbol");
+      }
+    })
+    .catch(errors=>{console.log(errors)});  
   }
  
-  
 
   return (
     <div className="todoapp stack-large">

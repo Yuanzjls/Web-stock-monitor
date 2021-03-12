@@ -7,7 +7,7 @@ export default function Todo(props){
     const editButtonRef = useRef(null);
     const wasEditing = usePrevious(isEditing);
     const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
-    const priceChangePercentage = priceChange / props.priceInfo.pricePre * 100;
+    const priceChangePercentage = Math.abs(priceChange / props.priceInfo.pricePre * 100);
 
     function usePrevious(value){
         const ref=useRef();
@@ -88,7 +88,7 @@ export default function Todo(props){
             </label> 
             <div>      
                 <span className="stock-price">{props.priceInfo.priceCur}</span><br/>
-                <span className="stock-price" style={{color:priceChange>0?"green":"red"}}>{Number(priceChange).toFixed(2)}({Number(priceChangePercentage).toFixed(2)}%)<br/></span>
+                <span className="stock-price" style={{color:priceChange>0?"green":"red"}}>{priceChange>0?"+":""}{Number(priceChange).toFixed(2)} ({Number(priceChangePercentage).toFixed(2)}%)<br/></span>
             </div>  
         </div>
     </div>
