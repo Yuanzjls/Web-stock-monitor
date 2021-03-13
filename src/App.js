@@ -76,13 +76,10 @@ function App(props) {
     stocks.forEach((stock, index) => {
       if (id=== stock.id)
       {
-        let tmpName = stock.name;
-        let priceInfo={'pricePre':stock.priceInfo.pricePre, 'priceCur':stock.priceInfo.priceCur};
         axios.get(`${preUrl}${newName}&token=${apiKey}`)
         .then((response)=>{
           if (response.data.t!==0){      
-            tmpName = newName;
-            priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
+            const priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
             editedStocks[index].name = newName;
             editedStocks[index].priceInfo = priceInfo;
             console.log(stocks);
