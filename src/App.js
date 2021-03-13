@@ -1,40 +1,23 @@
-import Todo from "./components/Todo";
-import Form from "./components/Form";
+import Form from "./components/Form/Form";
 import React, {useState, useRef, useEffect} from "react";
 import {nanoid} from "nanoid";
-// import useInterval from 'react-useinterval';
+import Stock from "./components/Stock/Stock";
 
 const axios = require('axios');
 const moment = require("moment-timezone");
 const apiKey = "c1433cn48v6s4a2e39q0";
 const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
 
-
-
 function App(props) {
   const [stocks, setStocks] = useState(props.stocks);
-  const prevTaskLenght = usePrevious(stocks.length);
   const [timeUpdate, SetTime] = useState(moment().format('LT'));
-  const [active, SetActive] = useState(false);
-  function usePrevious(value) {
-    const ref = useRef();
-    useEffect(()=>{
-      ref.current = value;
-    });
-    return ref.current;
-  }
-  const listHeadingRef = useRef(null);
-  const stockList = stocks.map(stock => (<Todo id={stock.id} name={stock.name} key={stock.id}  deleteTask={deleteTask} editTask={editTask}
-  priceInfo={stock.priceInfo}/>));
-  const tasksNoun = stockList.length!==1? 'stocks' : 'stock';
-  const headingText = `${stockList.length} ${tasksNoun}`;
-  
 
-  useEffect(()=>{
-    if (stockList.length-prevTaskLenght ===-1){
-      listHeadingRef.current.focus();
-    }
-  }, [stockList.length, prevTaskLenght]);
+
+  const stockList = stocks.map(stock => (<Stock id={stock.id} name={stock.name} key={stock.id}  deleteStock={deleteStock} editStock={editStock}
+  priceInfo={stock.priceInfo}/>));
+  const stocksNoun = stockList.length!==1? 'stocks' : 'stock';
+  const headingText = `${stockList.length} ${stocksNoun}`;
+  
 
   useInterval(()=>{fetchData();}, 60000)
 
@@ -73,13 +56,13 @@ function App(props) {
     }, [delay]);
   }
 
-  function deleteTask(id){
-    const remainingTasks = stocks.filter(task=> id !== task.id);
-    setStocks(remainingTasks);
-    // console.log(remainingTasks);
+  function deleteStock(id){
+    const remainingStocks = stocks.filter(stock=> id !== stock.id);
+    setStocks(remainingStocks);
+
   }
 
-  function editTask(id, name){
+  function editStock(id, name){
     let newName = encodeURI(name.toUpperCase().trim());
 
     if (stocks.map(stock=>stock.name).includes(newName))
@@ -88,23 +71,23 @@ function App(props) {
       return;
     }
 
-    const editedTasks=[...stocks];
+    const editedStocks=[...stocks];
 
-    stocks.forEach((task, index) => {
-      if (id=== task.id)
+    stocks.forEach((stock, index) => {
+      if (id=== stock.id)
       {
-        let tmpName = task.name;
-        let priceInfo={'pricePre':task.priceInfo.pricePre, 'priceCur':task.priceInfo.priceCur};
+        let tmpName = stock.name;
+        let priceInfo={'pricePre':stock.priceInfo.pricePre, 'priceCur':stock.priceInfo.priceCur};
         axios.get(`${preUrl}${newName}&token=${apiKey}`)
         .then((response)=>{
           if (response.data.t!==0){      
             tmpName = newName;
             priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
-            editedTasks[index].name = newName;
-            editedTasks[index].priceInfo = priceInfo;
+            editedStocks[index].name = newName;
+            editedStocks[index].priceInfo = priceInfo;
             console.log(stocks);
-            console.log(editedTasks);
-            setStocks(editedTasks);
+            console.log(editedStocks);
+            setStocks(editedStocks);
             console.log(priceInfo);
           }
           else{
@@ -114,44 +97,10 @@ function App(props) {
         .catch(errors=>{console.log(errors);});
 
       }
-    });
-    // setStocks(editedTasks);
-    // stocks.map(task=>{
-    //   if (id === task.id){
-        
-        
-    //     console.log(priceInfo);
-    //     const pullPrice = async ()=>{
-    //       let tmpName = task.name;
-    //       let priceInfo={'pricePre':task.priceInfo.pricePre, 'priceCur':task.priceInfo.priceCur};
-    //       try {
-    //         const response = await axios.get(`${preUrl}${newName}&token=${apiKey}`);
-    //         console.log(response.data);
-    //         if (response.data.t!==0){      
-    //           tmpName = newName;
-    //           priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
-    //           console.log(priceInfo);
-    //         }
-    //         else{
-    //           alert("The "+newName + " is not a stock symbol");
-    //         }
-    //       }
-    //       catch(error){
-    //         console.log(error);
-    //       }
-    //       return {tmpName, priceInfo};
-    //     }
-    //     const {tmpName, priceInfo} = pullPrice();
-    //     console.log(tmpName);
-    //     return {...task, name:tmpName, priceInfo:priceInfo};
-    //   }
-    //   return task;
-    // });
-    // setStocks(editedTasks);
-   
+    });   
   }
 
-  function addTask(name){
+  function addStock(name){
     let newName = encodeURI(name.toUpperCase().trim());
     if (stocks.map(stock=>stock.name).includes(newName))
     {
@@ -161,10 +110,10 @@ function App(props) {
     axios.get(`${preUrl}${newName}&token=${apiKey}`)
     .then(response=>{
       
-      const newTask = {id:"todo-" + nanoid(), name:newName, priceInfo:{'pricePre':response.data.pc, 'priceCur':response.data.c}};
+      const newStock = {id:"stock-" + nanoid(), name:newName, priceInfo:{'pricePre':response.data.pc, 'priceCur':response.data.c}};
       
       if (response.data.t!==0){      
-        setStocks([...stocks, newTask]);
+        setStocks([...stocks, newStock]);
       }
       else{
         alert("The "+newName + " is not a stock symbol");
@@ -175,15 +124,15 @@ function App(props) {
  
 
   return (
-    <div className="todoapp stack-large">
+    <div className="stockapp stack-large">
       <h1>Stock Prices</h1>
         <p style={{textAlign:"center"}}>Update at {timeUpdate}</p>
-        <Form addTask={addTask}/>
+        <Form addStock={addStock}/>
       <div className="filters btn-group stack-exception">
       
       </div>
-      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
-      <ul role="list" className="todo-list stack-large stack-exception" aria-labelledby='list-heading'>
+      <h2 id="list-heading" tabIndex="-1" >{headingText}</h2>
+      <ul role="list" className="stock-list stack-large stack-exception">
         {stockList}        
       </ul>
     </div> 
