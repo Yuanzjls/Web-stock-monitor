@@ -50,14 +50,16 @@ export default function Stock(props){
             </div>  
         </div>
     </div>
-    <div className="btn-group"  style={{display: hidden?"none":""}}>
+    <div className="btn-group"  style={{visibility: hidden?"hidden":"visible"}}>
         <button type="button" className="btn" onClick={()=>setEditing(true)} >
             Edit <span className="visually-hidden">{props.name} </span>
         </button>
         <button type="button" className="btn btn__danger" onClick={()=>{props.deleteStock(props.id)}}>
             Delete <span className="visually-hidden">{props.name}</span>
         </button>
+        
     </div>
+    <hr />
     </div>
 );
 
