@@ -1,13 +1,17 @@
-import React, {useState} from "react";
-
+import React, {useState, useMemo} from "react";
+import "./style.css"
 export default function Stock(props){
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [hidden, setHidden] = useState(true);
 
-    const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
-    const priceChangePercentage = Math.abs(priceChange / props.priceInfo.pricePre * 100);
+    // const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
+    // const priceChangePercentage = Math.abs(priceChange / props.priceInfo.pricePre * 100);
 
+    const {priceChange, priceChangePercentage} = useMemo(()=>{
+        const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
+        return {priceChange,
+        priceChangePercentage: Math.abs(priceChange / props.priceInfo.pricePre * 100)}}, [props.priceInfo.priceCur, props.priceInfo.pricePre]);
 
     function mouserOver(){
         setHidden(false);
