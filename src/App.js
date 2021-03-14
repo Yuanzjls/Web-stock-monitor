@@ -4,9 +4,7 @@ import {nanoid} from "nanoid";
 import Stock from "./components/Stock/Stock";
 import axios from "axios";
 import moment from "moment-timezone";
-
-const apiKey = "c1433cn48v6s4a2e39q0";
-const preUrl = "https://finnhub.io/api/v1/quote?symbol=";
+import fetchData, {makeUrl} from "./components/api/fetchData"
 
 function App(props) {
   const [stocks, setStocks] = useState(props.stocks);
@@ -17,26 +15,12 @@ function App(props) {
   const stocksNoun = stockList.length!==1? 'stocks' : 'stock';
   const headingText = `${stockList.length} ${stocksNoun}`;
   
-  useInterval(()=>{fetchData();}, 60000)
-
   function onSuccessFetch(newStocks) {
     setStocks(newStocks);
     setTimeUpdate(moment().format('LT'));
   }
-  
-  function fetchData() {
-    let apiList = stocks.map(stock=>({apiUrl:`${preUrl}${stock.name}&token=${apiKey}`}));
-    let promises = apiList.map(api=>axios(api.apiUrl));
-  
-    axios.all(promises).then(axios.spread((...responses)=>{
-      const newStocks = stocks.map((stock, index)=>{
-        return {...stock, priceInfo:{'pricePre':responses[index].data.pc, 'priceCur':responses[index].data.c}};
-      });
-      onSuccessFetch(newStocks);      
-    })).catch(errors => {
-      console.log(errors);
-    });
-  } 
+
+  useInterval(()=>{fetchData(stocks, onSuccessFetch);}, 60000)
 
   function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -49,7 +33,7 @@ function App(props) {
       function tick() {
         savedCallback.current();
       }
-      fetchData();
+      fetchData(stocks, onSuccessFetch);
 
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
@@ -75,7 +59,7 @@ function App(props) {
     stocks.forEach((stock, index) => {
       if (id=== stock.id)
       {
-        axios.get(`${preUrl}${newName}&token=${apiKey}`)
+        axios.get(makeUrl(newName))
         .then((response)=>{
           if (response.data.t!==0){      
             const priceInfo={'pricePre':response.data.pc, 'priceCur':response.data.c};
@@ -99,9 +83,8 @@ function App(props) {
       alert(newName + " is already on the watch list");
       return;
     }
-    axios.get(`${preUrl}${newName}&token=${apiKey}`)
-    .then(response=>{
-      
+    axios.get(makeUrl(newName))
+    .then(response=>{      
       const newStock = {id:"stock-" + nanoid(), name:newName, priceInfo:{'pricePre':response.data.pc, 'priceCur':response.data.c}};
       
       if (response.data.t!==0){      
