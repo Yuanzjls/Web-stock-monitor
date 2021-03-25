@@ -1,4 +1,4 @@
-import {creteSlice} from "@reduxjs/toolkit"
+import {createSlice} from "@reduxjs/toolkit"
 
 export const stockSlice = createSlice({
     name: "stock",
