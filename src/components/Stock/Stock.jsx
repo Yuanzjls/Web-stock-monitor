@@ -5,9 +5,6 @@ export default function Stock(props) {
     const [newName, setNewName] = useState('');
     const [hidden, setHidden] = useState(true);
 
-    // const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
-    // const priceChangePercentage = Math.abs(priceChange / props.priceInfo.pricePre * 100);
-
     const { priceChange, priceChangePercentage } = useMemo(() => {
         const priceChange = props.priceInfo.priceCur - props.priceInfo.pricePre;
         return {

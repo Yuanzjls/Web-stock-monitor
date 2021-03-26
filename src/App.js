@@ -5,8 +5,8 @@ import Stock from './components/Stock/Stock'
 import axios from 'axios'
 import moment from 'moment-timezone'
 import fetchData, { makeUrl } from './components/api/fetchData'
-import {selectStock} from "./features/stockSlice"
-import {useSelector} from "react-redux"
+import { selectStock } from './features/stockSlice'
+import { useSelector } from 'react-redux'
 
 function App() {
 	// const [stocks, setStocks] = useState(props.stocks)
@@ -103,12 +103,10 @@ function App() {
 	// 		})
 	// }
 
-	function addStock(){
-
-	}
-	const [timeUpdate, setTimeUpdate] = useState(moment().format('LT'));
-	const headingText="Hello";
-	const stockList = useSelector(selectStock);
+	function addStock() {}
+	const [timeUpdate, setTimeUpdate] = useState(moment().format('LT'))
+	const headingText = 'Hello'
+	const stockList = useSelector(selectStock)
 	return (
 		<div className="stockapp stack-large">
 			<h1>Stock Prices</h1>
@@ -119,7 +117,9 @@ function App() {
 				{headingText}
 			</h2>
 			<ul role="list" className="stock-list stack-large stack-exception">
-				{stockList}
+				{stockList.map((stock) => (
+					<Stock id={stock.id} name={stock.name} key={stock.id} priceInfo={stock.priceInfo} />
+				))}
 			</ul>
 		</div>
 	)

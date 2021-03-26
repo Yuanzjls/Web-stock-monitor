@@ -1,29 +1,31 @@
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 
 export const stockSlice = createSlice({
-    name: "stock",
-    initialState: [
-        { id: 'stock-0', name: 'STM', priceInfo: { pricePre: 0, priceCur: 0 } },
-        { id: 'stock-1', name: 'TXN', priceInfo: { pricePre: 0, priceCur: 0 } },
-        { id: 'stock-2', name: 'AMD', priceInfo: { pricePre: 0, priceCur: 0 } },
-        { id: 'stock-3', name: 'MSFT', priceInfo: { pricePre: 0, priceCur: 0 } },
-        { id: 'stock-4', name: 'INTC', priceInfo: { pricePre: 0, priceCur: 0 } },
-    ],
-    reducers:{
-        addStock:(state, action)=>{
-            return state;
-        },
-        deleteStock:(state, action)=>{
-            return state;
-        },
-        editStock: (state, action)=>{
-            return state;
-        }
-    }
-});
+	name: 'stock',
+	initialState: [
+		{ id: 'stock-0', name: 'STM', priceInfo: { pricePre: 0, priceCur: 0 } },
+		{ id: 'stock-1', name: 'TXN', priceInfo: { pricePre: 0, priceCur: 0 } },
+		{ id: 'stock-2', name: 'AMD', priceInfo: { pricePre: 0, priceCur: 0 } },
+		{ id: 'stock-3', name: 'MSFT', priceInfo: { pricePre: 0, priceCur: 0 } },
+		{ id: 'stock-4', name: 'INTC', priceInfo: { pricePre: 0, priceCur: 0 } },
+	],
+	reducers: {
+		addStock: (state, action) => {
+			console.log(action)
+			return [...state, { id: 'stock-' + nanoid(), name: action.payload.name, priceInfo: { pricePre: 0, priceCur: 0 } }]
+		},
+		deleteStock: (state, action) => {
+			return state
+		},
+		editStock: (state, action) => {
+			return state
+		},
+	},
+})
 
-export const {addStock, deleteStock, editStock} = stockSlice.actions;
+export const { addStock, deleteStock, editStock } = stockSlice.actions
 
-export const selectStock = state=>state.stock;
+export const selectStock = (state) => state.stock
 
-export default stockSlice.reducer;
+export default stockSlice.reducer

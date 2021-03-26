@@ -1,11 +1,15 @@
 import "./style.css"
 import React, { useState } from "react";
+import { addStock } from "../../features/stockSlice"
+import { useDispatch } from 'react-redux'
 
 export default function Form(props) {
   const [name, setName] = useState('');
+  const dispatch = useDispatch();
+
   function handleSubmit(e) {
     e.preventDefault();
-    props.addStock(name);
+    dispatch(addStock({ name: name }));
     setName("");
   }
   function handleChange(e) {
