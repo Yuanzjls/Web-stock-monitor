@@ -12,31 +12,27 @@ export const stockSlice = createSlice({
 	],
 	reducers: {
 		addStock: (state, action) => {
-			console.log(action)
-			return [...state, { id: 'stock-' + nanoid(), nasymbolme: action.payload.symbol, priceInfo: { pricePre: 0, priceCur: 0 } }]
+			return [...state, { id: 'stock-' + nanoid(), symbol: action.payload.symbol, priceInfo: action.payload.priceInfo }]
 		},
 		deleteStock: (state, action) => {
-			return state.filter((item)=>item.id !==action.payload.id);
+			return state.filter((item) => item.id !== action.payload.id)
 		},
 		editStock: (state, action) => {
-
-			return state.map((item)=>{
-				if (item.id === action.payload.id){
-					return {...item, symbol:action.payload.symbol};
-				}
-				else {
-					return item;
+			return state.map((item) => {
+				if (item.id === action.payload.id) {
+					return { ...item, symbol: action.payload.symbol, priceInfo: action.payload.priceInfo }
+				} else {
+					return item
 				}
 			})
 		},
-		updateStock: (state, action) =>{
-			const newState = state.map((item, index)=>{
-				return {...item, priceInfo:action.payload[index].priceInfo};
+		updateStock: (state, action) => {
+			const newState = state.map((item, index) => {
+				return { ...item, priceInfo: action.payload[index].priceInfo }
 			})
 
-
-			return newState;
-		}
+			return newState
+		},
 	},
 })
 

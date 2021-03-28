@@ -2,14 +2,14 @@ import "./style.css"
 import React, { useState } from "react";
 import { addStock } from "../../features/stockSlice"
 import { useDispatch } from 'react-redux'
-
+import { fetchAddedData } from '../../app/fetchData'
 export default function Form(props) {
   const [symbol, setSymbol] = useState('');
   const dispatch = useDispatch();
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(addStock({ symbol: symbol }));
+    dispatch(fetchAddedData(symbol));
     setSymbol("");
   }
   function handleChange(e) {

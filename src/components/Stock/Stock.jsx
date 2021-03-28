@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import "./style.css"
-import {deleteStock, editStock} from "../../features/stockSlice"
+import { deleteStock, editStock } from "../../features/stockSlice"
 import { useDispatch } from 'react-redux'
-
+import { fetchEditedData } from '../../app/fetchData'
 export default function Stock(props) {
     const [isEditing, setEditing] = useState(false);
     const [newSymbol, setNewSymbol] = useState('');
@@ -25,7 +25,7 @@ export default function Stock(props) {
     }
 
     const editingTemplate = (
-        <form className="stack-small" onSubmit={(e) => { e.preventDefault(); dispatch(editStock({id:props.id, symbol:newSymbol})); setNewSymbol(""); setEditing(false) }}>
+        <form className="stack-small" onSubmit={(e) => { e.preventDefault(); dispatch(fetchEditedData({ id: props.id, symbol: newSymbol })); setNewSymbol(""); setEditing(false) }}>
             <div className="form-group">
                 <label className="stock-label" htmlFor={props.id}>
                     Input a stock name:
@@ -62,7 +62,7 @@ export default function Stock(props) {
                 <button type="button" className="btn" onClick={() => setEditing(true)} >
                     Edit <span className="visually-hidden">{props.symbol} </span>
                 </button>
-                <button type="button" className="btn btn__danger" onClick={() => { dispatch(deleteStock({id:props.id}))}}>
+                <button type="button" className="btn btn__danger" onClick={() => { dispatch(deleteStock({ id: props.id })) }}>
                     Delete <span className="visually-hidden">{props.name}</span>
                 </button>
 
