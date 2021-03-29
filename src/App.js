@@ -35,7 +35,7 @@ function App() {
 			}
 		}, [delay])
 	}
-	useInterval(() => dispatch(fetchAllData(stockList)), 10000)
+	useInterval(() => dispatch(fetchAllData(stockList)), 60000)
 	return (
 		<div className="stockapp stack-large">
 			<h1>Stock Prices</h1>
