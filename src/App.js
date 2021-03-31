@@ -1,117 +1,54 @@
 import NewStockForm from './components/NewStockForm/NewStockForm'
-import React, { useState, useRef, useEffect } from 'react'
-import { nanoid } from 'nanoid'
+import React, { useState, useRef, useEffec, useEffect } from 'react'
+
 import Stock from './components/Stock/Stock'
 import axios from 'axios'
 import moment from 'moment-timezone'
-import fetchData, { makeUrl } from './components/api/fetchData'
+import { fetchAllData } from './app/fetchData'
+import { selectStock } from './features/stockSlice'
+import { useSelector, useDispatch } from 'react-redux'
 
-function App(props) {
-	const [stocks, setStocks] = useState(props.stocks)
+function App() {
 	const [timeUpdate, setTimeUpdate] = useState(moment().format('LT'))
+	const stockList = useSelector(selectStock)
+	const length = stockList.length
+	const noun = length > 1 ? 'stocks' : 'stock'
+	const headingText = `${length} ${noun}`
+	const dispatch = useDispatch()
 
-	const stockList = stocks.map((stock) => (
-		<Stock id={stock.id} name={stock.name} key={stock.id} deleteStock={deleteStock} editStock={editStock} priceInfo={stock.priceInfo} />
-	))
-	const stocksNoun = stockList.length !== 1 ? 'stocks' : 'stock'
-	const headingText = `${stockList.length} ${stocksNoun}`
-
-	function onSuccessFetch(newStocks) {
-		setStocks(newStocks)
-		setTimeUpdate(moment().format('LT'))
-	}
-
-	useInterval(() => {
-		fetchData(stocks, onSuccessFetch)
-	}, 60000)
-
-	function useInterval(callback, delay) {
-		const savedCallback = useRef()
+	const useInterval = (callback, delay) => {
+		const saveCallback = useRef()
 
 		useEffect(() => {
-			savedCallback.current = callback
+			saveCallback.current = callback
 		})
 
 		useEffect(() => {
 			function tick() {
-				savedCallback.current()
+				saveCallback.current()
 			}
-			fetchData(stocks, onSuccessFetch)
 
-			let id = setInterval(tick, delay)
-			return () => clearInterval(id)
+			if (delay !== null) {
+				tick()
+				let id = setInterval(tick, delay)
+				return () => clearInterval(id)
+			}
 		}, [delay])
 	}
-
-	function deleteStock(id) {
-		const remainingStocks = stocks.filter((stock) => id !== stock.id)
-		setStocks(remainingStocks)
-	}
-
-	function editStock(id, name) {
-		let newName = encodeURI(name.toUpperCase().trim())
-
-		if (stocks.map((stock) => stock.name).includes(newName)) {
-			alert(newName + ' is already on the watch list')
-			return
-		}
-
-		const editedStocks = [...stocks]
-
-		stocks.forEach((stock, index) => {
-			if (id === stock.id) {
-				axios
-					.get(makeUrl(newName))
-					.then((response) => {
-						if (response.data.t !== 0) {
-							const priceInfo = { pricePre: response.data.pc, priceCur: response.data.c }
-							editedStocks[index].name = newName
-							editedStocks[index].priceInfo = priceInfo
-							setStocks(editedStocks)
-						} else {
-							alert(name + ' does not exist')
-						}
-					})
-					.catch((errors) => {
-						console.log(errors)
-					})
-			}
-		})
-	}
-
-	function addStock(name) {
-		let newName = encodeURI(name.toUpperCase().trim())
-		if (stocks.map((stock) => stock.name).includes(newName)) {
-			alert(newName + ' is already on the watch list')
-			return
-		}
-		axios
-			.get(makeUrl(newName))
-			.then((response) => {
-				const newStock = { id: 'stock-' + nanoid(), name: newName, priceInfo: { pricePre: response.data.pc, priceCur: response.data.c } }
-
-				if (response.data.t !== 0) {
-					setStocks([...stocks, newStock])
-				} else {
-					alert('The ' + newName + ' is not a stock symbol')
-				}
-			})
-			.catch((errors) => {
-				console.log(errors)
-			})
-	}
-
+	useInterval(() => dispatch(fetchAllData(stockList)), 60000)
 	return (
 		<div className="stockapp stack-large">
 			<h1>Stock Prices</h1>
 			<p style={{ textAlign: 'center' }}>Update at {timeUpdate}</p>
-			<NewStockForm addStock={addStock} />
+			<NewStockForm />
 			<div className="filters btn-group stack-exception"></div>
 			<h2 id="list-heading" tabIndex="-1">
 				{headingText}
 			</h2>
 			<ul role="list" className="stock-list stack-large stack-exception">
-				{stockList}
+				{stockList.map((stock) => (
+					<Stock id={stock.id} symbol={stock.symbol} key={stock.id} priceInfo={stock.priceInfo} />
+				))}
 			</ul>
 		</div>
 	)

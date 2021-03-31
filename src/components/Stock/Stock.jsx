@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from "react";
 import "./style.css"
+import { deleteStock, editStock } from "../../features/stockSlice"
+import { useDispatch } from 'react-redux'
+import { fetchEditedData } from '../../app/fetchData'
 export default function Stock(props) {
     const [isEditing, setEditing] = useState(false);
-    const [newName, setNewName] = useState('');
+    const [newSymbol, setNewSymbol] = useState('');
     const [hidden, setHidden] = useState(true);
-
-    // const priceChange = props.priceInfo.priceCur-props.priceInfo.pricePre;
-    // const priceChangePercentage = Math.abs(priceChange / props.priceInfo.pricePre * 100);
+    const dispatch = useDispatch();
 
     const { priceChange, priceChangePercentage } = useMemo(() => {
         const priceChange = props.priceInfo.priceCur - props.priceInfo.pricePre;
@@ -24,12 +25,12 @@ export default function Stock(props) {
     }
 
     const editingTemplate = (
-        <form className="stack-small" onSubmit={(e) => { e.preventDefault(); props.editStock(props.id, newName); setNewName(""); setEditing(false) }}>
+        <form className="stack-small" onSubmit={(e) => { e.preventDefault(); dispatch(fetchEditedData({ id: props.id, symbol: newSymbol })); setNewSymbol(""); setEditing(false) }}>
             <div className="form-group">
                 <label className="stock-label" htmlFor={props.id}>
                     Input a stock name:
                 </label>
-                <input id={props.id} className="stock-text" type="text" value={newName} onChange={e => { setNewName(e.target.value); }}
+                <input id={props.id} className="stock-text" type="text" value={newSymbol} onChange={e => { setNewSymbol(e.target.value); }}
                 />
             </div>
             <div className="btn-group">
@@ -49,7 +50,7 @@ export default function Stock(props) {
             <div className="c-cb"  >
                 <div className="stock-container">
                     <label className="stock-label" htmlFor={props.id}>
-                        {props.name}
+                        {props.symbol}
                     </label>
                     <div>
                         <span className="stock-price">{props.priceInfo.priceCur}</span><br />
@@ -59,9 +60,9 @@ export default function Stock(props) {
             </div>
             <div className="btn-group" style={{ visibility: hidden ? "hidden" : "visible" }}>
                 <button type="button" className="btn" onClick={() => setEditing(true)} >
-                    Edit <span className="visually-hidden">{props.name} </span>
+                    Edit <span className="visually-hidden">{props.symbol} </span>
                 </button>
-                <button type="button" className="btn btn__danger" onClick={() => { props.deleteStock(props.id) }}>
+                <button type="button" className="btn btn__danger" onClick={() => { dispatch(deleteStock({ id: props.id })) }}>
                     Delete <span className="visually-hidden">{props.name}</span>
                 </button>
 
